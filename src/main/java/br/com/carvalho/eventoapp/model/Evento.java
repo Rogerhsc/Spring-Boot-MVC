@@ -1,11 +1,15 @@
 package br.com.carvalho.eventoapp.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Evento implements Serializable{
@@ -14,12 +18,17 @@ public class Evento implements Serializable{
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private long codigo;
-	
+	@NotEmpty
 	private String nome;
+	@NotEmpty
 	private String local;
+	@NotEmpty
 	private String data;
+	@NotEmpty
 	private String horarioinicio;
 	
+	@OneToMany
+	private List<Convidado> convidados;
 	
 	public Evento() {
 		super();
