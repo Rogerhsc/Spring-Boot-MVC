@@ -1,5 +1,8 @@
 package br.com.carvalho.eventoapp.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,35 @@ public class EventoController {
 		modelAndView.addObject("convidados", convidados);
 		return modelAndView;
 	}
+	
+	@RequestMapping(value="/deletarEvento")
+	public String deletaEvento(long codigo) {
+		Evento evento = eventoRepository.findByCodigo(codigo);
+		if(Objects.nonNull(evento)) {
+			Iterable<Convidado> convidados = convidadoRepository.findByEvento(evento);
+			if(Objects.nonNull(convidados)) {
+				convidadoRepository.deleteAll(convidados);
+			}
+			convidadoRepository.deleteAll(convidados);
+			eventoRepository.delete(evento);
+			return "redirect:/eventos";
+		}
+		return "";
+	}
+	
+	@RequestMapping(value="/deletarConvidado")
+	public String deletaConvidado(String rg) {
+		Convidado convidado = convidadoRepository.findByRg(rg);
+		if(Objects.nonNull(convidado)) {
+			convidadoRepository.delete(convidado);
+			Evento evento = convidado.getEvento();
+			long codigoEvento = evento.getCodigo();
+			String codigo = String.valueOf(codigoEvento);
+			return "redirect:/" + codigo;
+		}
+		return "";
+	}
+	
 	@RequestMapping(value="/{codigo}", method = RequestMethod.POST)
 	public String salvarConvidado(@PathVariable("codigo") long codigo, @Valid Convidado convidado,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
